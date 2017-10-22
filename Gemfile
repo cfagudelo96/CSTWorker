@@ -1,0 +1,6 @@
+gem 'aws-sdk'
+gem 'carrierwave-mongoid', require: 'carrierwave/mongoid'
+gem 'fog-aws'
+gem 'mongoid', '~> 6.1.0'
+gem 'streamio-ffmpeg'
+gem 'mail'

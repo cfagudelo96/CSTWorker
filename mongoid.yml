@@ -1,0 +1,6 @@
+development:
+  clients:
+    default:
+      database: cloud_smart_tools_development
+      hosts:
+        - localhost:27017
