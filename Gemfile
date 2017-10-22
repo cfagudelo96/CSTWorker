@@ -1,4 +1,4 @@
-gem 'aws-sdk'
+gem 'aws-sdk', '~> 3'
 gem 'carrierwave-mongoid', require: 'carrierwave/mongoid'
 gem 'fog-aws'
 gem 'mongoid', '~> 6.1.0'
