@@ -67,10 +67,11 @@ loop do
       transcoded_video_file = Tempfile.new([video_id, '.mp4'])
       puts transcoded_video_file.path
       movie.transcode(transcoded_video_file.path)
+      puts 'transcoded'
       video.video = transcoded_video_file.open
       video.status = Video::CONVERTED
       video.save
-      puts 'transcoded'
+      puts 'saved'
       Mail.deliver do
         from 'cloudsmarttools@gmail.com'
         to video.email
@@ -82,7 +83,7 @@ loop do
       transcoded_video_file.close
       original_video_tmp_file.unlink
       transcoded_video_file.unlink
-      sleep(5)
+      sleep(30)
     end
   rescue StandardError
     next
