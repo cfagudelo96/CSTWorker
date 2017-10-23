@@ -53,32 +53,40 @@ loop do
 
     response.messages.each do |message|
       video_id = message.body
+      puts video_id
       video = Video.find(video_id)
       original_filename_split = video.original_video.file.filename.split('.')
       original_video_tmp_file = Tempfile.new([original_filename_split[0], ".#{original_filename_split[1]}"])
+      puts original_video_tmp_file.path
       open(video.original_video.url) do |uri|
         File.open(original_video_tmp_file, 'wb') do |output|
           IO.copy_stream(uri, output)
         end
       end
+      puts 'copy'
       movie = FFMPEG::Movie.new(original_video_tmp_file.path)
       transcoded_video_file = Tempfile.new([video_id, '.mp4'])
+      puts transcoded_video_file.path
       movie.transcode(transcoded_video_file.path)
+      puts 'transcoded'
       video.video = transcoded_video_file.open
       video.status = Video::CONVERTED
       video.save
+      puts 'save'
       Mail.deliver do
         from 'cloudsmarttools@gmail.com'
         to video.email
         subject 'Tu video ha sido subido'
         body "Hola #{video.name}, tu video ha sido subido a nuestra webpage. Cuando accedas a su respectivo concurso podras verlo"
       end
+      puts 'mail'
       sqs.delete_message(queue_url: ENV['CST_SQS_URL'], receipt_handle: message.receipt_handle)
+      puts 'delete'
       original_video_tmp_file.close
       transcoded_video_file.close
       original_video_tmp_file.unlink
       transcoded_video_file.unlink
-      sleep(30)
+      sleep(5)
     end
   rescue StandardError
     next
