@@ -3,4 +3,4 @@ development:
     default:
       database: cloud_smart_tools_development
       hosts:
-        - localhost:27017
+        - <%= ENV['CST_MONGODB_HOST'] %>:27017
