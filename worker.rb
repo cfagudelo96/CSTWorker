@@ -53,9 +53,11 @@ loop do
 
     response.messages.each do |message|
       video_id = message.body
+      puts video_id
       video = Video.find(video_id)
       original_filename_split = video.original_video.file.filename.split('.')
       original_video_tmp_file = Tempfile.new([original_filename_split[0], ".#{original_filename_split[1]}"])
+      puts original_video_tmp_file.path
       open(video.original_video.url) do |uri|
         File.open(original_video_tmp_file, 'wb') do |output|
           IO.copy_stream(uri, output)
@@ -63,10 +65,12 @@ loop do
       end
       movie = FFMPEG::Movie.new(original_video_tmp_file.path)
       transcoded_video_file = Tempfile.new([video_id, '.mp4'])
+      puts transcoded_video_file.path
       movie.transcode(transcoded_video_file.path)
       video.video = transcoded_video_file.open
       video.status = Video::CONVERTED
       video.save
+      puts 'transcoded'
       Mail.deliver do
         from 'cloudsmarttools@gmail.com'
         to video.email
