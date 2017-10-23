@@ -53,13 +53,10 @@ loop do
 
     response.messages.each do |message|
       video_id = message.body
-      puts "Video id #{video_id}"
       video = Video.find(video_id)
       original_filename_split = video.original_video.file.filename.split('.')
       original_video_tmp_file = Tempfile.new([original_filename_split[0], ".#{original_filename_split[1]}"])
-      puts "Original video #{original_video_tmp_file.path}"
       open(video.original_video.url) do |uri|
-        puts uri
         File.open(original_video_tmp_file, 'wb') do |output|
           IO.copy_stream(uri, output)
         end
@@ -67,7 +64,6 @@ loop do
       movie = FFMPEG::Movie.new(original_video_tmp_file.path)
       transcoded_video_file = Tempfile.new([video_id, '.mp4'])
       movie.transcode(transcoded_video_file.path)
-      puts "Transcoded video #{transcoded_video_file.path}"
       video.video = transcoded_video_file.open
       video.status = Video::CONVERTED
       video.save
@@ -77,7 +73,6 @@ loop do
         subject 'Tu video ha sido subido'
         body "Hola #{video.name}, tu video ha sido subido a nuestra webpage. Cuando accedas a su respectivo concurso podras verlo"
       end
-      puts 'Mail'
       sqs.delete_message(queue_url: ENV['CST_SQS_URL'], receipt_handle: message.receipt_handle)
       original_video_tmp_file.close
       transcoded_video_file.close
