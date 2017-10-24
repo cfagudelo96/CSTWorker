@@ -21,7 +21,8 @@ CarrierWave.configure do |config|
     region: ENV['CST_AWS_REGION']
   }
   config.fog_directory = ENV['CST_S3_BUCKET']
-  config.fog_public = false
+  config.fog_public = true
+  config.fog_attributes = {'Cache-Control' => 'max-age=315576000'}
 end
 
 Mongoid.load!('./mongoid.yml', :production)
