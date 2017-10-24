@@ -1,6 +1,6 @@
-development:
+production:
   clients:
     default:
-      database: cloud_smart_tools_development
+      database: cloud_smart_tools_production
       hosts:
-        - <%= ENV['CST_MONGODB_HOST'] %>:27017
+        - <%= ENV['CST_MONGODB_HOST'] %>:<%= ENV['CST_MONGODB_PORT'] %>

@@ -24,7 +24,7 @@ CarrierWave.configure do |config|
   config.fog_public = false
 end
 
-Mongoid.load!('./mongoid.yml', :development)
+Mongoid.load!('./mongoid.yml', :production)
 credentials = Aws::Credentials.new(ENV['CST_AWS_KEY'],
                                    ENV['CST_AWS_SECRET'])
 
